@@ -894,6 +894,12 @@ def install_chat_resizer() -> None:
                     host.getComputedStyle(element).overflowY === "auto"
                     && element.getBoundingClientRect().height > 0
                   );
+                const visibleChatForm = [...chatColumn.querySelectorAll('[data-testid="stForm"]')]
+                  .find((element) => {
+                    const rect = element.getBoundingClientRect();
+                    const style = host.getComputedStyle(element);
+                    return rect.height > 0 && style.display !== "none" && style.visibility !== "hidden";
+                  });
 
                 if (mobile) {
                   doc.body.classList.remove("valencia-dashboard-active");
@@ -942,12 +948,13 @@ def install_chat_resizer() -> None:
                 }
 
                 chatScrollers.forEach((scroller) => {
-                  const panel = scroller.closest('[role="tabpanel"]');
-                  const form = panel?.querySelector('[data-testid="stForm"]');
-                  const formRect = form?.getBoundingClientRect();
-                  const reserve = formRect && formRect.height > 0 ? formRect.height + 12 : 0;
+                  // Streamlit renders the message list and its form as siblings. Looking
+                  // for the form only inside the tab panel leaves no room for it and can
+                  // push the input and submit button below the viewport.
+                  const formRect = visibleChatForm?.getBoundingClientRect();
+                  const reserve = formRect && formRect.height > 0 ? formRect.height + 24 : 0;
                   const scrollerHeight = Math.max(
-                    220,
+                    160,
                     viewportBottom - scroller.getBoundingClientRect().top - reserve,
                   );
                   scroller.style.setProperty("height", `${scrollerHeight}px`, "important");
