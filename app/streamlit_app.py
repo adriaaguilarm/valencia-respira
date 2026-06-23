@@ -890,9 +890,23 @@ def install_chat_resizer() -> None:
                 if (persist) saveWidth(currentWidth);
               };
 
+              const clearIframeSizing = (container) => {
+                if (!container) return;
+                container.querySelector('iframe[data-testid="stIFrame"]')?.style.removeProperty("height");
+                container.style.removeProperty("height");
+                container.style.removeProperty("min-height");
+                container.style.removeProperty("max-height");
+                container.style.removeProperty("flex");
+                container.removeAttribute("data-valencia-viewport-iframe");
+              };
+
               const fitViewport = () => {
                 const mobile = host.matchMedia("(max-width: 900px)").matches;
-                const mainIframe = mainColumn.querySelector("iframe");
+                const mainIframe = mainColumn.querySelector('iframe[data-testid="stIFrame"]');
+                const iframeContainer = mainIframe?.closest('[data-testid="stElementContainer"]');
+                [...mainColumn.querySelectorAll('[data-valencia-viewport-iframe]')]
+                  .filter((container) => container !== iframeContainer)
+                  .forEach(clearIframeSizing);
                 const scrollMarker = mainColumn.querySelector("#valencia-main-scroll-mode");
                 const scrollMode = scrollMarker?.dataset.mode || "fixed";
                 const mainShouldScroll = scrollMarker?.dataset.scroll === "true";
@@ -916,14 +930,7 @@ def install_chat_resizer() -> None:
                   row.style.removeProperty("max-height");
                   mainColumn.style.removeProperty("height");
                   chatColumn.style.removeProperty("height");
-                  if (mainIframe) {
-                    mainIframe.style.removeProperty("height");
-                    const iframeContainer = mainIframe.closest('[data-testid="stElementContainer"]');
-                    iframeContainer?.style.removeProperty("height");
-                    iframeContainer?.style.removeProperty("min-height");
-                    iframeContainer?.style.removeProperty("max-height");
-                    iframeContainer?.style.removeProperty("flex");
-                  }
+                  clearIframeSizing(iframeContainer);
                   chatScrollers.forEach((scroller) => {
                     scroller.style.removeProperty("height");
                     scroller.style.removeProperty("min-height");
@@ -955,8 +962,8 @@ def install_chat_resizer() -> None:
                 if (mainIframe) {
                   const iframeHeight = Math.max(260, viewportBottom - mainIframe.getBoundingClientRect().top);
                   mainIframe.style.setProperty("height", `${iframeHeight}px`);
-                  const iframeContainer = mainIframe.closest('[data-testid="stElementContainer"]');
                   if (iframeContainer) {
+                    iframeContainer.setAttribute("data-valencia-viewport-iframe", "true");
                     iframeContainer.style.setProperty("height", `${iframeHeight}px`, "important");
                     iframeContainer.style.setProperty("min-height", "0", "important");
                     iframeContainer.style.setProperty("max-height", `${iframeHeight}px`, "important");
@@ -1047,6 +1054,7 @@ def install_chat_resizer() -> None:
                 host.removeEventListener("resize", onResize);
                 chatColumn.removeEventListener("click", onChatClick);
                 layoutObserver.disconnect();
+                [...mainColumn.querySelectorAll('[data-valencia-viewport-iframe]')].forEach(clearIframeSizing);
                 doc.body.classList.remove("valencia-chat-resizing");
                 doc.body.classList.remove("valencia-dashboard-active");
               };
