@@ -158,16 +158,21 @@ PREGUNTA DEL USUARIO
 {question}
 
 INSTRUCCIONES DE RESPUESTA
-- Responde usando los datos actuales y/o predichos segun corresponda.
+- Responde exclusivamente a lo que pregunta el usuario y ajusta el detalle al alcance de su consulta. No uses una plantilla fija.
+- Si la pregunta pide un dato concreto de una zona o contaminante, responde en 1 a 3 frases, sin titulos ni listas innecesarias.
+- Si pide una comparacion, un ranking o una vision general, organiza la informacion con una lista breve o titulos solo cuando mejoren la lectura.
+- No anadas una seccion `Datos relevantes` por rutina. Usala unicamente si la consulta es amplia y hay varios hallazgos necesarios para responderla.
+- Incluye predicciones solo si el usuario pregunta por el futuro, la evolucion o las proximas 8 horas. No anadas predicciones a preguntas sobre la situacion actual.
+- Cuando uses una prediccion, identificala en la misma frase o seccion y aclara una sola vez que es una estimacion, no una medicion real.
+- Menciona la falta de datos solo cuando afecte directamente a la zona, contaminante o comparacion preguntada; no enumeres ausencias ajenas a la consulta.
+- Comprueba la coherencia antes de responder: nunca afirmes que falta un dato para una zona y contaminante si la tabla muestra un valor numerico para esa misma combinacion.
+- Si no existe el dato exacto solicitado, dilo claramente y no lo sustituyas por otro contaminante, otra zona o una prediccion no pedida.
 - Si comparas zonas, menciona los contaminantes concretos y sus categorias de calidad.
-- Si faltan datos, explicalo sin inventar valores.
 - No des consejo medico; limita la respuesta a interpretacion informativa de calidad del aire.
 - Escribe en Markdown limpio y preparado para mostrarse directamente en la interfaz.
-- Empieza con una respuesta directa de una frase y resalta la conclusion principal en negrita.
-- Cuando haya varios datos relevantes, usa el titulo `### Datos relevantes` y una lista de 2 a 4 puntos.
-- Si utilizas predicciones, separalas bajo el titulo `### Prediccion +8 h` y deja claro que no son mediciones reales.
-- Destaca contaminantes, zonas y categorias con negrita. Usa codigo inline para valores numericos, por ejemplo `42.0 µg/m³`.
-- No uses tablas, encabezados de nivel 1 o 2, introducciones genericas ni frases de cierre innecesarias.
+- Empieza por la respuesta, sin introducciones genericas, recapitulaciones ni frases de cierre innecesarias.
+- Usa negrita y codigo inline con moderacion; reserva el codigo inline para valores numericos como `42.0 µg/m³`.
+- No uses tablas ni encabezados de nivel 1 o 2.
 """.strip()
 
 
@@ -219,7 +224,10 @@ def call_mistral_api(prompt: str, role: str, *, temperature: float = 0.2, max_to
 
 
 def ask_air_quality(question: str) -> str:
-    role = "Eres un asistente experto en explicar datos de calidad del aire de Valencia para usuarios generales."
+    role = (
+        "Eres un asistente experto en explicar datos de calidad del aire de Valencia para usuarios generales. "
+        "Responde al alcance exacto de cada pregunta, sin repetir una estructura fija ni anadir informacion no solicitada."
+    )
     return call_mistral_api(build_user_prompt(question), role, temperature=0.2, max_tokens=500)
 
 
