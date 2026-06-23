@@ -356,8 +356,9 @@ def style_page() -> None:
           body.valencia-chat-resizing,
           body.valencia-chat-resizing * { cursor: col-resize !important; user-select: none !important; }
           body.valencia-dashboard-active section[data-testid="stMain"] { overflow-y: hidden !important; }
-          section[data-testid="stMain"]:has(#valencia-main-anchor) { overflow-y: hidden !important; }
-          section[data-testid="stMain"]:has(#valencia-main-anchor) .block-container { padding-bottom: 0 !important; }
+          body.valencia-dashboard-active section[data-testid="stMain"]:has(#valencia-main-anchor) .block-container {
+            padding-bottom: 0 !important;
+          }
           body.valencia-dashboard-active .block-container { padding-bottom: 0 !important; }
           body.valencia-dashboard-active [data-testid="stLayoutWrapper"]:has(.valencia-resizable-row)
             + [data-testid="stElementContainer"]:has(.stHtml) {
@@ -806,8 +807,14 @@ def install_chat_resizer() -> None:
         """
         <script>
           (() => {
-            const host = window.parent;
-            const doc = host.document;
+            // st.html executes in the app document in current Streamlit versions,
+            // while older versions used a child frame. Resolve both layouts so the
+            // viewport sizing and scroll rules are always initialized.
+            const localDoc = document;
+            let parentDoc = null;
+            try { parentDoc = window.parent !== window ? window.parent.document : null; } catch (_) {}
+            const doc = localDoc.getElementById("valencia-main-anchor") ? localDoc : (parentDoc || localDoc);
+            const host = doc.defaultView || window;
             const storageKey = "valencia-air-chat-width";
             const defaultWidth = 30;
 
@@ -911,7 +918,11 @@ def install_chat_resizer() -> None:
                   chatColumn.style.removeProperty("height");
                   if (mainIframe) {
                     mainIframe.style.removeProperty("height");
-                    mainIframe.closest('[data-testid="stElementContainer"]')?.style.removeProperty("height");
+                    const iframeContainer = mainIframe.closest('[data-testid="stElementContainer"]');
+                    iframeContainer?.style.removeProperty("height");
+                    iframeContainer?.style.removeProperty("min-height");
+                    iframeContainer?.style.removeProperty("max-height");
+                    iframeContainer?.style.removeProperty("flex");
                   }
                   chatScrollers.forEach((scroller) => {
                     scroller.style.removeProperty("height");
@@ -944,7 +955,13 @@ def install_chat_resizer() -> None:
                 if (mainIframe) {
                   const iframeHeight = Math.max(260, viewportBottom - mainIframe.getBoundingClientRect().top);
                   mainIframe.style.setProperty("height", `${iframeHeight}px`);
-                  mainIframe.closest('[data-testid="stElementContainer"]')?.style.setProperty("height", `${iframeHeight}px`);
+                  const iframeContainer = mainIframe.closest('[data-testid="stElementContainer"]');
+                  if (iframeContainer) {
+                    iframeContainer.style.setProperty("height", `${iframeHeight}px`, "important");
+                    iframeContainer.style.setProperty("min-height", "0", "important");
+                    iframeContainer.style.setProperty("max-height", `${iframeHeight}px`, "important");
+                    iframeContainer.style.setProperty("flex", `0 0 ${iframeHeight}px`, "important");
+                  }
                 }
 
                 chatScrollers.forEach((scroller) => {
