@@ -23,4 +23,4 @@ La aplicación necesita estas variables de entorno:
 - Dependencias Python: `requirements.txt`
 - Dependencias del sistema: `packages.txt`
 
-Los secretos deben configurarse desde los ajustes de Streamlit Cloud y nunca incluirse en el repositorio.
+
