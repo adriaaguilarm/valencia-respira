@@ -1,0 +1,34 @@
+[
+  {
+    "path": "predictions/history/2026-06-23_09-00.csv",
+    "timestamp": "2026-06-23_09-00"
+  },
+  {
+    "path": "predictions/history/2026-06-23_11-53.csv",
+    "timestamp": "2026-06-23_11-53"
+  },
+  {
+    "path": "predictions/history/2026-06-23_12-27.csv",
+    "timestamp": "2026-06-23_12-27"
+  },
+  {
+    "path": "predictions/history/2026-06-23_15-45.csv",
+    "timestamp": "2026-06-23_15-45"
+  },
+  {
+    "path": "predictions/history/2026-06-23_17-04.csv",
+    "timestamp": "2026-06-23_17-04"
+  },
+  {
+    "path": "predictions/history/2026-06-23_17-25.csv",
+    "timestamp": "2026-06-23_17-25"
+  },
+  {
+    "path": "predictions/history/2026-06-23_18-31.csv",
+    "timestamp": "2026-06-23_18-31"
+  },
+  {
+    "path": "predictions/history/2026-06-23_19-39.csv",
+    "timestamp": "2026-06-23_19-39"
+  }
+]

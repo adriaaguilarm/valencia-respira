@@ -1,0 +1,8 @@
+pandas
+numpy
+streamlit>=1.58,<2
+altair
+requests
+selenium
+lxml
+mistralai>=2.4,<3
