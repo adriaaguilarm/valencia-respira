@@ -17,8 +17,6 @@ La aplicación convierte una tabla municipal dispersa en una experiencia de cons
 - Muestra mapas, KPIs, histórico scrapeado, tablas de seguimiento y explicación de umbrales.
 - Incluye resumen y chatbot con Mistral, alimentados con el contexto de datos actuales y predicciones.
 
-## Capturas
-
 ### Origen de datos municipal
 
 ![Dashboard municipal de calidad del aire](docs/assets/ayuntamiento-valencia-al-minut.png)
